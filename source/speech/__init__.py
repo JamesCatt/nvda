@@ -898,7 +898,7 @@ class SpeakTextInfoState(object):
 		return self.__class__(self)
 
 
-def _speakTextInfo_addMath(
+def _extendSpeechSequence_addMathForTextInfo(
 		speechSequence: SpeechSequence, info: textInfos.TextInfo, field: textInfos.Field
 ) -> None:
 	import mathPres
@@ -1047,7 +1047,7 @@ def speakTextInfo(  # noqa: C901
 				shouldConsiderTextInfoBlank = False
 			if field.get("role")==controlTypes.ROLE_MATH:
 				shouldConsiderTextInfoBlank = False
-				_speakTextInfo_addMath(speechSequence,info,field)
+				_extendSpeechSequence_addMathForTextInfo(speechSequence,info,field)
 
 	# When true, we are inside a clickable field, and should therefore not announce any more new clickable fields
 	inClickable=False
@@ -1076,7 +1076,7 @@ def speakTextInfo(  # noqa: C901
 			shouldConsiderTextInfoBlank = False
 		if field.get("role")==controlTypes.ROLE_MATH:
 			shouldConsiderTextInfoBlank = False
-			_speakTextInfo_addMath(speechSequence,info,field)
+			_extendSpeechSequence_addMathForTextInfo(speechSequence,info,field)
 		commonFieldCount+=1
 
 	#Fetch the text for format field attributes that have changed between what was previously cached, and this textInfo's initialFormatField.
@@ -1200,7 +1200,7 @@ def speakTextInfo(  # noqa: C901
 						lastLanguage=None
 					relativeSpeechSequence.extend(fieldSequence)
 				if command.command=="controlStart" and command.field.get("role")==controlTypes.ROLE_MATH:
-					_speakTextInfo_addMath(relativeSpeechSequence,info,command.field)
+					_extendSpeechSequence_addMathForTextInfo(relativeSpeechSequence,info,command.field)
 				if autoLanguageSwitching and newLanguage!=lastLanguage:
 					relativeSpeechSequence.append(LangChangeCommand(newLanguage))
 					lastLanguage=newLanguage
