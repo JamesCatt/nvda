@@ -276,9 +276,6 @@ def getCharDescListFromText(text,locale):
 	return charDescList
 
 
-# C901 'speakObjectProperties' is too complex
-# Note: when working on speakObjectProperties, look for opportunities to simplify
-# and move logic out into smaller helper functions.
 def speakObjectProperties(  # noqa: C901
 		obj,
 		reason: str = controlTypes.REASON_QUERY,
@@ -286,6 +283,24 @@ def speakObjectProperties(  # noqa: C901
 		priority: Optional[Spri] = None,
 		**allowedProperties
 ):
+	speechSequence = getObjectPropertiesSpeech(
+		obj,
+		reason,
+		_prefixSpeechCommand,
+		**allowedProperties,
+	)
+	if speechSequence:
+		speak(speechSequence, priority=priority)
+
+# C901 'speakObjectProperties' is too complex
+# Note: when working on speakObjectProperties, look for opportunities to simplify
+# and move logic out into smaller helper functions.
+def getObjectPropertiesSpeech(  # noqa: C901
+		obj,
+		reason: str = controlTypes.REASON_QUERY,
+		_prefixSpeechCommand: Optional[SpeechCommand] = None,
+		**allowedProperties
+) -> SpeechSequence:
 	#Fetch the values for all wanted properties
 	newPropertyValues={}
 	positionInfo=None
@@ -332,7 +347,7 @@ def speakObjectProperties(  # noqa: C901
 	obj._speakObjectPropertiesCache=cachedPropertyValues
 	#If we should only cache we can stop here
 	if reason==controlTypes.REASON_ONLYCACHE:
-		return
+		return []
 	#If only speaking change, then filter out all values that havn't changed
 	if reason==controlTypes.REASON_CHANGE:
 		for name in set(newPropertyValues)&set(oldCachedPropertyValues):
@@ -378,7 +393,7 @@ def speakObjectProperties(  # noqa: C901
 	if speechSequence:
 		if _prefixSpeechCommand is not None:
 			speechSequence.insert(0, _prefixSpeechCommand)
-		speak(speechSequence, priority=priority)
+	return speechSequence
 
 
 def _speakPlaceholderIfEmpty(
