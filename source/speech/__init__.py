@@ -310,6 +310,7 @@ def speakObjectProperties(  # noqa: C901
 	if speechSequence:
 		speak(speechSequence, priority=priority)
 
+
 # C901 'speakObjectProperties' is too complex
 # Note: when working on speakObjectProperties, look for opportunities to simplify
 # and move logic out into smaller helper functions.
@@ -475,11 +476,11 @@ def getObjectSpeech(  # noqa: C901
 		_prefixSpeechCommand=_prefixSpeechCommand,
 		**allowProperties
 	)
-	if reason==controlTypes.REASON_ONLYCACHE:
+	if reason == controlTypes.REASON_ONLYCACHE:
 		return sequence
 	if shouldReportTextContent:
 		try:
-			info=obj.makeTextInfo(textInfos.POSITION_SELECTION)
+			info = obj.makeTextInfo(textInfos.POSITION_SELECTION)
 			if not info.isCollapsed:
 				# if there is selected text, then there is a value and we do not report placeholder
 				sequence.extend(getPreselectedTextSpeech(info.text))
@@ -492,8 +493,8 @@ def getObjectSpeech(  # noqa: C901
 					reason=controlTypes.REASON_CARET
 				)
 				sequence.extend(textInfoSpeech)
-		except:
-			newInfo=obj.makeTextInfo(textInfos.POSITION_ALL)
+		except:  # noqa E722 legacy bare except. Unknown what exceptions may be raised.
+			newInfo = obj.makeTextInfo(textInfos.POSITION_ALL)
 			placeholderSpeech = _getPlaceholderSpeechIfTextEmpty(obj, reason)
 			if placeholderSpeech:
 				sequence.extend(placeholderSpeech)
@@ -504,7 +505,7 @@ def getObjectSpeech(  # noqa: C901
 					reason=controlTypes.REASON_CARET,
 				)
 				sequence.extend(textInfoSpeech)
-	elif role==controlTypes.ROLE_MATH:
+	elif role == controlTypes.ROLE_MATH:
 		import mathPres
 		mathPres.ensureInit()
 		if mathPres.speechProvider:
@@ -1171,7 +1172,7 @@ def getTextInfoSpeech(  # noqa: C901
 				shouldConsiderTextInfoBlank = False
 			if field.get("role")==controlTypes.ROLE_MATH:
 				shouldConsiderTextInfoBlank = False
-				_extendSpeechSequence_addMathForTextInfo(speechSequence,info,field)
+				_extendSpeechSequence_addMathForTextInfo(speechSequence, info, field)
 
 	# When true, we are inside a clickable field, and should therefore not announce any more new clickable fields
 	inClickable=False
@@ -1200,7 +1201,7 @@ def getTextInfoSpeech(  # noqa: C901
 			shouldConsiderTextInfoBlank = False
 		if field.get("role")==controlTypes.ROLE_MATH:
 			shouldConsiderTextInfoBlank = False
-			_extendSpeechSequence_addMathForTextInfo(speechSequence,info,field)
+			_extendSpeechSequence_addMathForTextInfo(speechSequence, info, field)
 		commonFieldCount+=1
 
 	#Fetch the text for format field attributes that have changed between what was previously cached, and this textInfo's initialFormatField.
@@ -1226,10 +1227,10 @@ def getTextInfoSpeech(  # noqa: C901
 
 	isWordOrCharUnit = unit in (textInfos.UNIT_CHARACTER, textInfos.UNIT_WORD)
 	if onlyInitialFields or (
-			isWordOrCharUnit
-			and len(textWithFields) > 0
-			and len(textWithFields[0]) == 1
-			and all(isControlEndFieldCommand(x) for x in itertools.islice(textWithFields, 1, None))
+		isWordOrCharUnit
+		and len(textWithFields) > 0
+		and len(textWithFields[0]) == 1
+		and all(isControlEndFieldCommand(x) for x in itertools.islice(textWithFields, 1, None))
 	):
 		retSequence = []
 		if not onlyCache:
@@ -1338,7 +1339,7 @@ def getTextInfoSpeech(  # noqa: C901
 						lastLanguage=None
 					relativeSpeechSequence.extend(fieldSequence)
 				if command.command=="controlStart" and command.field.get("role")==controlTypes.ROLE_MATH:
-					_extendSpeechSequence_addMathForTextInfo(relativeSpeechSequence,info,command.field)
+					_extendSpeechSequence_addMathForTextInfo(relativeSpeechSequence, info, command.field)
 				if autoLanguageSwitching and newLanguage!=lastLanguage:
 					relativeSpeechSequence.append(LangChangeCommand(newLanguage))
 					lastLanguage=newLanguage

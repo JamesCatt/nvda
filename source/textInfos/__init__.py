@@ -12,7 +12,7 @@ A default implementation, L{NVDAObjects.NVDAObjectTextInfo}, is used to enable t
 from abc import abstractmethod
 import weakref
 import re
-from typing import Any, Union, List, Optional, Dict, Sequence
+from typing import Any, Union, List, Optional, Dict
 
 import baseObject
 import config
