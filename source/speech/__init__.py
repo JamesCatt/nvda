@@ -1069,7 +1069,6 @@ def getTextInfoSpeech(  # noqa: C901
 	if unit in (textInfos.UNIT_PARAGRAPH,textInfos.UNIT_CELL) and reason is controlTypes.REASON_CARET:
 		formatConfig['reportSpellingErrors']=False
 
-	speechSequence: SpeechSequence = []
 	#Fetch the last controlFieldStack, or make a blank one
 	controlFieldStackCache=speakTextInfoState.controlFieldStackCache if speakTextInfoState else []
 	formatFieldAttributesCache=speakTextInfoState.formatFieldAttributesCache if speakTextInfoState else {}
@@ -1128,6 +1127,7 @@ def getTextInfoSpeech(  # noqa: C901
 		else:
 			break
 
+	speechSequence: SpeechSequence = []
 	# #2591: Only if the reason is not focus, Speak the exit of any controlFields not in the new stack.
 	# We don't do this for focus because hearing "out of list", etc. isn't useful when tabbing or using quick navigation and makes navigation less efficient.
 	if reason!=controlTypes.REASON_FOCUS:
