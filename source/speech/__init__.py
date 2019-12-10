@@ -311,8 +311,8 @@ def speakObjectProperties(  # noqa: C901
 		speak(speechSequence, priority=priority)
 
 
-# C901 'speakObjectProperties' is too complex
-# Note: when working on speakObjectProperties, look for opportunities to simplify
+# C901 'getObjectPropertiesSpeech' is too complex
+# Note: when working on getObjectPropertiesSpeech, look for opportunities to simplify
 # and move logic out into smaller helper functions.
 def getObjectPropertiesSpeech(  # noqa: C901
 		obj,
