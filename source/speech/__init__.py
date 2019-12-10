@@ -440,7 +440,8 @@ def speakObject(
 		reason,
 		_prefixSpeechCommand,
 	)
-	speak(sequence, priority=priority)
+	if sequence:
+		speak(sequence, priority=priority)
 
 
 # C901 'speakObject' is too complex
