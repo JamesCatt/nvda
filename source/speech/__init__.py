@@ -444,8 +444,8 @@ def speakObject(
 		speak(sequence, priority=priority)
 
 
-# C901 'speakObject' is too complex
-# Note: when working on speakObject, look for opportunities to simplify
+# C901 'getObjectSpeech' is too complex
+# Note: when working on getObjectSpeech, look for opportunities to simplify
 # and move logic out into smaller helper functions.
 def getObjectSpeech(  # noqa: C901
 		obj,
