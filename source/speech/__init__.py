@@ -2395,11 +2395,10 @@ class SpeechWithoutPauses:
 			return self._getSpeech(speechSequence)
 
 	def _flushPendingSpeech(self):
-		if self._pendingSpeechSequence:
-			# Place the last incomplete phrase in to finalSpeechSequence to be spoken now
-			pending = self._pendingSpeechSequence
-			self._pendingSpeechSequence = []
-			return pending
+		# Place the last incomplete phrase in to finalSpeechSequence to be spoken now
+		pending = self._pendingSpeechSequence
+		self._pendingSpeechSequence = []
+		return pending
 
 	def _detectBreaksAndGetSpeech(self, speechSequence):
 		lastStartIndex = 0
