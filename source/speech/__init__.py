@@ -52,7 +52,7 @@ from .commands import (  # noqa: F401
 
 from . import types
 from .types import SpeechSequence, SequenceItemT
-from typing import Optional, Dict, List, Any, Tuple, Generator
+from typing import Optional, Dict, List, Any, Generator
 from logHandler import log
 import config
 import aria
@@ -488,7 +488,7 @@ def getObjectSpeech(  # noqa: C901
 			else:
 				info.expand(textInfos.UNIT_LINE)
 				sequence.extend(_getPlaceholderSpeechIfTextEmpty(obj, reason))
-				ret, textInfoSpeech = getTextInfoSpeech(
+				textInfoSpeech = getTextInfoSpeech(
 					info,
 					unit=textInfos.UNIT_LINE,
 					reason=controlTypes.REASON_CARET
@@ -500,7 +500,7 @@ def getObjectSpeech(  # noqa: C901
 			if placeholderSpeech:
 				sequence.extend(placeholderSpeech)
 			else:
-				ret, textInfoSpeech = getTextInfoSpeech(
+				textInfoSpeech = getTextInfoSpeech(
 					newInfo,
 					unit=textInfos.UNIT_PARAGRAPH,
 					reason=controlTypes.REASON_CARET,
@@ -1023,7 +1023,7 @@ def speakTextInfo(
 		suppressBlanks: bool = False,
 		priority: Optional[Spri] = None
 ) -> bool:
-	ret, speechSequence = getTextInfoSpeech(
+	speechSequence = getTextInfoSpeech(
 		info,
 		useCache,
 		formatConfig,
@@ -1035,7 +1035,7 @@ def speakTextInfo(
 	)
 	if speechSequence:
 		speak(speechSequence, priority=priority)
-	return ret
+	return bool(speechSequence)
 
 
 # C901 'getTextInfoSpeech' is too complex
@@ -1050,7 +1050,7 @@ def getTextInfoSpeech(  # noqa: C901
 		_prefixSpeechCommand: Optional[SpeechCommand] = None,
 		onlyInitialFields: bool = False,
 		suppressBlanks: bool = False
-) -> Tuple[bool, SpeechSequence]:
+) -> SpeechSequence:
 	onlyCache=reason==controlTypes.REASON_ONLYCACHE
 	if isinstance(useCache,SpeakTextInfoState):
 		speakTextInfoState=useCache
@@ -1128,6 +1128,8 @@ def getTextInfoSpeech(  # noqa: C901
 		else:
 			break
 
+	#: only used for preparation of speech, should not be returned. Instead, 'retSequence' is used in this
+	#: function where calls to speak previously were.
 	speechSequence: SpeechSequence = []
 	# #2591: Only if the reason is not focus, Speak the exit of any controlFields not in the new stack.
 	# We don't do this for focus because hearing "out of list", etc. isn't useful when tabbing or using quick navigation and makes navigation less efficient.
@@ -1247,7 +1249,7 @@ def getTextInfoSpeech(  # noqa: C901
 			speakTextInfoState.formatFieldAttributesCache=formatFieldAttributesCache
 			if not isinstance(useCache,SpeakTextInfoState):
 				speakTextInfoState.updateObj()
-		return False, retSequence
+		return []
 
 	# Similar to before, but If the most inner clickable is exited, then we allow announcing clickable for the next lot of clickable fields entered.
 	inClickable=False
@@ -1402,10 +1404,11 @@ def getTextInfoSpeech(  # noqa: C901
 	onlyCache = reason == controlTypes.REASON_ONLYCACHE
 	if not onlyCache and speechSequence:
 		if reason == controlTypes.REASON_SAYALL:
-			speechSequence = _speakWithoutPauses.getSpeechWithoutPauses(speechSequence)
-			return bool(speechSequence), speechSequence
+			retSequence = _speakWithoutPauses.getSpeechWithoutPauses(speechSequence)
 		else:
-			return True, speechSequence
+			retSequence = speechSequence
+		return retSequence
+	return []
 
 # C901 'getPropertiesSpeech' is too complex
 # Note: when working on getPropertiesSpeech, look for opportunities to simplify
